@@ -43,7 +43,7 @@ def write_transitions_to_csv(directory_name, zone_name, transitions):
         for transition in transitions:
             utc_time, offset = transition
             offset_str = format_offset(offset)
-            writer.writerow([utc_time.strftime('%Y-%m-%d %H:%M:%S'), offset_str])
+            writer.writerow([utc_time.strftime('%Y-%m-%dT%H:%M:%S'), offset_str])
     
     return filename
 
