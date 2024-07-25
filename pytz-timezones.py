@@ -15,7 +15,8 @@ def get_all_dst_transitions(zone_name):
     if not hasattr(tz, '_utc_transition_times'):
         now = datetime.now(pytz.utc)
         offset = tz.utcoffset(now)
-        return [(datetime(1, 1, 1, 0, 0, 0, tzinfo=timezone.utc), offset)]
+        rule_name = tz.tzname(now)
+        return [(datetime(1, 1, 1, 0, 0, 0, tzinfo=timezone.utc), offset, rule_name)]
     else:
         # Get the transitions for the specified timezone
         transitions = []
@@ -24,10 +25,10 @@ def get_all_dst_transitions(zone_name):
                 if dt == datetime(1, 1, 1, 0, 0, 0, tzinfo=timezone.utc):
                     d = datetime(1800, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
                     local_time = tz.fromutc(d)
-                    transitions.append((dt, local_time.utcoffset()))
+                    transitions.append((dt, local_time.utcoffset(), local_time.tzname()))
                 else:
                     local_time = tz.fromutc(dt)
-                    transitions.append((dt, local_time.utcoffset()))
+                    transitions.append((dt, local_time.utcoffset(), local_time.tzname()))
             except (OverflowError, ValueError) as e:
                 print(f"Error processing transition for timezone {zone_name}: {dt}, Error: {e}")
                 continue
@@ -38,12 +39,12 @@ def write_transitions_to_csv(directory_name, zone_name, transitions):
     filename = f'{directory_name}/{zone_name.replace("/", "_")}.csv'
     with open(filename, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['Time', 'Offset'])
+        writer.writerow(['Time', 'Offset', 'Name'])
         
         for transition in transitions:
-            utc_time, offset = transition
+            utc_time, offset, rule_name = transition
             offset_str = format_offset(offset)
-            writer.writerow([utc_time.strftime('%Y-%m-%dT%H:%M:%S'), offset_str])
+            writer.writerow([utc_time.strftime('%Y-%m-%dT%H:%M:%S'), offset_str, rule_name])
     
     return filename
 
