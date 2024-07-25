@@ -1,7 +1,7 @@
 # pytz-timezones
 The IANA timezone database (while we are all grateful for it) is a convoluted mess.
 There is little hope of implementing it entirely correctly in Hoon. At present it has resisted all attempts at simplification and legibility.
-Therefore we will defer to prior art to ensure robustness and correctness. 
+Therefore we will defer to prior art to ensure robustness and correctness and to drastically reduce the surface area for timezone bugs.
 
 `pytz-timezones.py` is a script which uses the `pytz` library to extract from each official IANA timezone the datetime in UTC of a transition to a new offset,
 the offset to which we are transitioning, and the name of the relevant rule (e.g. EST vs EDT or AEST vs AEDT).
