@@ -20,4 +20,4 @@ With this radically simplified and reliable dataset (roughly 2.9MB), it is trivi
 
 To use, simply drop the contents of `lib` into your desk's `lib` directory.
 
-The following is a good website for quick sanity checks: https://utctime.info/timezone/
+The following is a good website for quick sanity checks: https://utctime.info/timezone/ (Note that for many of the IANA timezones a quick Google search will yield an incorrect result.)
