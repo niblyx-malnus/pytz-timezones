@@ -14,3 +14,5 @@ With this radically simplified and reliable dataset (roughly 2.9MB), it is trivi
 `/lib/pytz.hoon` contains a dedicated and standalone library which imports the timezones as raw data and provides an interface for converting between timezones.
 
 To use, simply drop the contents of `lib` into your desk's `lib` directory.
+
+The following is a good website for quick sanity checks: https://utctime.info/timezone/
