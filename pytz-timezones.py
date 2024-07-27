@@ -1,6 +1,6 @@
 import os
 import csv
-from datetime import datetime, timezone
+from datetime import datetime
 import pytz
 
 JAN_1_1 = datetime(1, 1, 1, 0, 0, 0)
