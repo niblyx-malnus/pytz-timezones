@@ -13,6 +13,11 @@ With this radically simplified and reliable dataset (roughly 2.9MB), it is trivi
 
 `/lib/pytz.hoon` contains a dedicated and standalone library which imports the timezones as raw data and provides an interface for converting between timezones.
 
+`/lib/pytz` is a directory which contains:
+  - a hoon file for each IANA timezone converting a csv `cord` to a `wain`
+  - `names.hoon`: a list of IANA timezone names
+  - `version.hoon`: the version number of `pytz` used to generate this dataset; TODO: implement a more robust versioning strategy
+
 To use, simply drop the contents of `lib` into your desk's `lib` directory.
 
 The following is a good website for quick sanity checks: https://utctime.info/timezone/
