@@ -157,6 +157,7 @@
   ^-  (list [@t zone])
   |-
   ?~  names
+    ~&  >  "timezones were successfully loaded!"
     ~
   ~&  >>  "loading timezone [{(numb idx)}/{(numb total)}]: {(trip i.names)}"
   :_  $(idx +(idx), names t.names)
