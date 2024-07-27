@@ -3,6 +3,9 @@ import csv
 from datetime import datetime, timezone
 import pytz
 
+JAN_1_1 = datetime(1, 1, 1, 0, 0, 0)
+JAN_1_2000 = datetime(2000, 1, 1, 0, 0, 0)
+
 def format_offset(offset):
     total_seconds = offset.total_seconds()
     hours, remainder = divmod(total_seconds, 3600)
@@ -13,10 +16,12 @@ def get_all_dst_transitions(zone_name):
     tz = pytz.timezone(zone_name)
 
     if not hasattr(tz, '_utc_transition_times'):
-        now = datetime.now(pytz.utc)
-        offset = tz.utcoffset(now)
-        rule_name = tz.tzname(now)
-        return [(datetime(1, 1, 1, 0, 0, 0, tzinfo=timezone.utc), offset, rule_name)]
+        # In the case where the timezone has no transitions, it is a timezone
+        # defined by a single offset; get the offset from the arbitrary date
+        # January 1st, 2000
+        offset = tz.utcoffset(JAN_1_2000)
+        rule_name = tz.tzname(JAN_1_2000)
+        return [(JAN_1_1, offset, rule_name)]
     else:
         # Get the transitions for the specified timezone
         transitions = []
@@ -25,7 +30,7 @@ def get_all_dst_transitions(zone_name):
                 local_time = tz.fromutc(dt)
                 transitions.append((dt, local_time.utcoffset(), local_time.tzname()))
             except (OverflowError, ValueError) as e:
-                print(f"Error processing transition for timezone {zone_name}: {dt}, Error: {e}")
+                assert dt == JAN_1_1, "invalid transition is not January 1, 0001"
                 continue
         return transitions
 
