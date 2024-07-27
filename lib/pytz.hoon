@@ -7,15 +7,14 @@
     ::
     ++  apply-delta
       |=  [=time =delta]
-      ^-  ^time
-      ~?  (gth d.delta ~d1)  [%delta-more-than-day d.delta]
+      ^+  time
       (?:(sign.delta add sub) time d.delta)
     ::
     ++  invert-delta  |=(=delta delta(sign !sign.delta))
     ::
     ++  apply-invert-delta
       |=  [=time =delta]
-      ^-  ^time
+      ^+  time
       (apply-delta time (invert-delta delta))
     ::
     ++  compose-deltas
