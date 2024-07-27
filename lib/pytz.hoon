@@ -46,14 +46,6 @@
         =/  vex  (sef tub)
         ?~  q.vex  vex
         ((gat p.u.q.vex) q.u.q.vex)
-      :: check if done
-      ::
-      ++  done
-        |=  tub=nail
-        ^-  (like ?)
-        ?~  q.tub
-          [p.tub ~ %.y tub]
-        [p.tub ~ %.n tub]
       :: lookahead arbitrary rule
       ::
       ++  peek
@@ -114,6 +106,15 @@
       :-  (rash i.contents parse-zone-row)
       $(contents t.contents)
     ::
+    ++  parse-zone-row
+      =,  monadic-parsing
+      ;<  jump=@da   bind  parse-datetime
+      ;<  *          bind  com
+      ;<  =delta     bind  parse-offset
+      ;<  *          bind  com
+      ;<  name=@t    bind  (cook crip (star prn))
+      (easy [jump delta name])
+    ::
     ++  parse-datetime
       =,  monadic-parsing
       ;<  y=@ud   bind  (exact-dem 4)
@@ -146,15 +147,6 @@
       ;<  *       bind  col
       ;<  m=@ud   bind  (exact-dem 2)
       (easy `delta`[sign (add (mul h ~h1) (mul m ~m1))])
-    ::
-    ++  parse-zone-row
-      =,  monadic-parsing
-      ;<  jump=@da   bind  parse-datetime
-      ;<  *          bind  com
-      ;<  =delta     bind  parse-offset
-      ;<  *          bind  com
-      ;<  name=@t    bind  (cook crip (star prn))
-      (easy [jump delta name])
     --
 :: materialize the timezones
 ::
