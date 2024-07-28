@@ -18,7 +18,8 @@ def get_all_dst_transitions(zone_name):
     if not hasattr(tz, '_utc_transition_times'):
         # In the case where the timezone has no transitions, it is a timezone
         # defined by a single offset; get the offset from the arbitrary date
-        # January 1st, 2000
+        # January 1st, 2000 but record as starting on what the IANA tzdb considers
+        # to be the beginning of time: January 1st, 1
         offset = tz.utcoffset(JAN_1_2000)
         rule_name = tz.tzname(JAN_1_2000)
         return [(JAN_1_1, offset, rule_name)]
