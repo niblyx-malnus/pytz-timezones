@@ -45,15 +45,15 @@
         =/  vex  (sef tub)
         ?~  q.vex  vex
         ((gat p.u.q.vex) q.u.q.vex)
-      :: lookahead arbitrary rule
+      :: try to parse and advance only on success 
       ::
-      ++  peek
+      ++  seek
         |*  sef=rule
         |=  tub=nail
         =+  vex=(sef tub)
         ?~  q.vex
           [p=p.vex q=[~ u=[p=~ q=tub]]]
-        [p=p.vex q=[~ u=[p=[~ p.u.q.vex] q=tub]]]
+        [p=p.vex q=[~ u=[p=[~ p.u.q.vex] q=q.u.q.vex]]]
       ::
       ++  exact-dem
         |=  n=@ud
@@ -126,16 +126,14 @@
       ;<  *       bind  col
       ;<  mi=@ud  bind  (exact-dem 2)
       =/  d=@da   (year [& y] mo d h mi 0 ~)
-      ;<  is-col=(unit *)  bind  (peek col)
-      ?~  is-col
+      ;<  col=(unit char)  bind  (seek col)
+      ?~  col
         (easy d)
-      ;<  *      bind  col
       ;<  s=@ud  bind  (exact-dem 2)
       =.  d      (add d (mul s ~s1))
-      ;<  is-dot=(unit *)  bind  (peek dot)
-      ?~  is-dot
+      ;<  dot=(unit char)  bind  (seek dot)
+      ?~  dot
         (easy d)
-      ;<  *      bind  dot
       ;<  f=@ud  bind  (exact-dem 3)
       (easy (add d (div (mul f ~s1) 1.000)))
     ::
