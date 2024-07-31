@@ -38,10 +38,10 @@
   ?:  (lth d ~d45)
     "a month"
   ?:  (lth d ~d320)
-    "{(numb (div (add d ~d15) ~d30))} days"
+    "{(numb (div (add d ~d15) ~d30))} months"
   ?:  (lth d ~d548)
     "a year"
-  "{(numb (div (add d ~d182.h15) ~d365.h6))} days"
+  "{(numb (div (add d ~d182.h15) ~d365.h6))} years"
 ::
 ++  dr-format
   |=  [as=@t d=@dr]
