@@ -79,7 +79,8 @@
   =/  w=@  (get-weekday d)
   ?:(=(0 w) 7 w)
 :: days from weekday a to the last weekday b
-:: i.e. days between wedneday and last monday
+:: i.e. days between wednesday and last monday: 2
+::      days between wednesday and last thursday: 6
 ::
 ++  sub-wkd
   |=  [a=@ud b=@ud]
