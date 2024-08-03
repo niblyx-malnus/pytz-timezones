@@ -151,7 +151,7 @@
 =/  [version=@t files=(map @t wain)]
   (parse-data (to-wain:format pytz-data))
 =/  names=(list @t)  ~['UTC' 'America/New_York']
-:: =/  names=(list @t)  ~(tap in ~(key by files))
+:: =/  names=(list @t)  (sort ~(tap in ~(key by files)) aor)
 =/  zones=(map @t zone)
   %-  ~(gas by *(map @t zone))
   =/  idx=@ud  1
