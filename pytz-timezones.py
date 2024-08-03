@@ -16,15 +16,10 @@ def get_all_dst_transitions(zone_name):
     tz = pytz.timezone(zone_name)
 
     if not hasattr(tz, '_utc_transition_times'):
-        # In the case where the timezone has no transitions, it is a timezone
-        # defined by a single offset; get the offset from the arbitrary date
-        # January 1st, 2000 but record as starting on what the IANA tzdb considers
-        # to be the beginning of time: January 1st, 1
         offset = tz.utcoffset(JAN_1_2000)
         rule_name = tz.tzname(JAN_1_2000)
         return [(JAN_1_1, offset, rule_name)]
     else:
-        # Get the transitions for the specified timezone
         transitions = []
         for dt in tz._utc_transition_times:
             try:
@@ -35,52 +30,34 @@ def get_all_dst_transitions(zone_name):
                 continue
         return transitions
 
-def write_transitions_to_csv(directory_name, zone_name, transitions):
-    # Create CSV file for the timezone
-    filename = f'{directory_name}/{zone_name.replace("/", "-").replace("_", "-").replace("+", "--").lower()}.hoon'
-    with open(filename, mode='w', newline='') as file:
-        writer = csv.writer(file, lineterminator='\n')
-        # Write the header
-        file.write("%-  to-wain:format\n'''\n")
-        writer.writerow(['Time', 'Offset', 'Name'])
-        
-        for transition in transitions:
-            utc_time, offset, rule_name = transition
-            offset_str = format_offset(offset)
-            writer.writerow([utc_time.strftime('%Y-%m-%dT%H:%M:%S'), offset_str, rule_name])
-        
-        # Write the footer
-        file.write("'''\n")
+def write_transitions_to_file(file, zone_name, transitions):
+    rows = []
+
+    for transition in transitions:
+        utc_time, offset, rule_name = transition
+        offset_str = format_offset(offset)
+        rows.append([utc_time.strftime('%Y-%m-%dT%H:%M:%S'), offset_str, rule_name])
     
-    return filename
+    file.write(f'{len(rows)} {zone_name}\n')
+    writer = csv.writer(file, lineterminator='\n')
+    writer.writerows(rows)
 
 def main():
-    # Create directory named 'pytz'
-    directory_name = 'lib/pytz'
+    # Create directory named 'lib/pytz'
+    directory_name = 'lib'
     if not os.path.exists(directory_name):
         os.makedirs(directory_name)
     
-    # Write the pytz version to version.hoon
-    version_filename = f'{directory_name}/version.hoon'
-    with open(version_filename, mode='w', newline='') as version_file:
-        version_file.write("%-  to-wain:format\n'''\n")
-        version_file.write(pytz.__version__)
-        version_file.write("\n'''\n")
-    
-    # Prepare names file
-    names_filename = f'{directory_name}/names.hoon'
-    with open(names_filename, mode='w', newline='') as names_file:
-        names_file.write("%-  to-wain:format\n'''\n")
+    # Open the pytz-data.txt file
+    output_filename = f'{directory_name}/pytz-data.txt'
+    with open(output_filename, mode='w', newline='') as output_file:
+        # Write the pytz version
+        output_file.write(f'{pytz.__version__}\n')
         
-        # Get all timezones
-        timezones = pytz.all_timezones
-        
-        for zone_name in timezones:
+        # Write transitions for each timezone
+        for zone_name in pytz.all_timezones:
             transitions = get_all_dst_transitions(zone_name)
-            write_transitions_to_csv(directory_name, zone_name, transitions)
-            names_file.write(f"{zone_name}\n")
-        
-        names_file.write("'''\n")
+            write_transitions_to_file(output_file, zone_name, transitions)
 
 if __name__ == "__main__":
     main()

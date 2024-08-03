@@ -1,4 +1,4 @@
-/~  files  wain  /lib/pytz
+/*  pytz-data
 :: helper structures and functions
 ::
 =>  |%
@@ -70,34 +70,35 @@
 :: timezone-specific structures and parsers
 ::
 =>  |%
-    :: version of pytz python library used to generate dataset
-    ::
-    ++  version  `@t`(snag 0 (~(got by files) %version))
-    ::
     +$  rule  [offset=delta name=@t]
     +$  zone  ((mop @da rule) lth)
     ++  zon   ((on @da rule) lth)
     ::
-    ++  to-filename
-      |=  n=@t
-      ^-  term
-      =/  name=tape  (cass (trip n))
-      %+  rap  3
+    ++  parse-data
+      |=  rows=wain
+      ^-  [@t (map @t wain)]
+      ?>  ?=(^ rows)
+      :-  i.rows
+      %-  ~(gas by *(map @t wain))
+      =/  contents=wain  t.rows
       |-
-      ?~  name
+      ?~  contents
         ~
-      :_  $(name t.name)
-      ?+  i.name  i.name
-        %'/'  '-'
-        %'_'  '-'
-        %'+'  '--'
-      ==
+      =/  [lines=@ud name=@t]  (rash i.contents parse-zone-header)
+      :-  [name (scag lines t.contents)]
+      $(contents (slag lines t.contents))
+    ::
+    ++  parse-zone-header
+      =,  monadic-parsing
+      ;<  lines=@ud  bind  dem
+      ;<  *          bind  ace
+      ;<  name=tape  bind  (star prn)
+      (easy [lines (crip name)])
     ::
     ++  parse-zone-rows
       |=  rows=wain
       ^-  (list [@da rule])
       ?>  ?=(^ rows)
-      ?>  =('Time,Offset,Name' i.rows)
       =/  contents=wain  t.rows
       |-
       ?~  contents
@@ -147,7 +148,10 @@
     --
 :: materialize the timezones
 ::
-=/  names=(list @t)  (~(got by files) %names)
+=/  [version=@t files=(map @t wain)]
+  (parse-data (to-wain:format pytz-data))
+=/  names=(list @t)  ~['UTC' 'America/New_York']
+:: =/  names=(list @t)  ~(tap in ~(key by files))
 =/  zones=(map @t zone)
   %-  ~(gas by *(map @t zone))
   =/  idx=@ud  1
@@ -162,8 +166,7 @@
   :-  i.names
   %+  gas:zon  *zone
   %-  parse-zone-rows
-  %-  ~(got by files)
-  (to-filename i.names)
+  (~(got by files) i.names)
 :: timezone conversion core
 ::
 |%
