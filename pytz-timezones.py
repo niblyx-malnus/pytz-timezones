@@ -37,20 +37,15 @@ def get_all_dst_transitions(zone_name):
 
 def write_transitions_to_csv(directory_name, zone_name, transitions):
     # Create CSV file for the timezone
-    filename = f'{directory_name}/{zone_name.replace("/", "-").replace("_", "-").replace("+", "--").lower()}.hoon'
+    filename = f'{directory_name}/{zone_name.replace("/", "-").replace("_", "-").replace("+", "--").lower()}.txt'
     with open(filename, mode='w', newline='') as file:
         writer = csv.writer(file, lineterminator='\n')
-        # Write the header
-        file.write("%-  to-wain:format\n'''\n")
         writer.writerow(['Time', 'Offset', 'Name'])
         
         for transition in transitions:
             utc_time, offset, rule_name = transition
             offset_str = format_offset(offset)
             writer.writerow([utc_time.strftime('%Y-%m-%dT%H:%M:%S'), offset_str, rule_name])
-        
-        # Write the footer
-        file.write("'''\n")
     
     return filename
 
@@ -61,26 +56,21 @@ def main():
         os.makedirs(directory_name)
     
     # Write the pytz version to version.hoon
-    version_filename = f'{directory_name}/version.hoon'
+    version_filename = f'{directory_name}/version.txt'
     with open(version_filename, mode='w', newline='') as version_file:
-        version_file.write("%-  to-wain:format\n'''\n")
         version_file.write(pytz.__version__)
-        version_file.write("\n'''\n")
     
     # Prepare names file
-    names_filename = f'{directory_name}/names.hoon'
+    names_filename = f'{directory_name}/names.txt'
     with open(names_filename, mode='w', newline='') as names_file:
-        names_file.write("%-  to-wain:format\n'''\n")
-        
         # Get all timezones
         timezones = pytz.all_timezones
         
         for zone_name in timezones:
             transitions = get_all_dst_transitions(zone_name)
             write_transitions_to_csv(directory_name, zone_name, transitions)
+            print(zone_name)
             names_file.write(f"{zone_name}\n")
-        
-        names_file.write("'''\n")
 
 if __name__ == "__main__":
     main()
