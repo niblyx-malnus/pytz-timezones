@@ -1,5 +1,5 @@
 # pytz-timezones
-The IANA timezone database (while we are all grateful for it) is a convoluted mess.
+The [IANA timezone database](https://github.com/eggert/tz) (while we are all grateful for it) is a convoluted mess.
 There is little hope of implementing it entirely correctly in Hoon. At present it has resisted all attempts at simplification and legibility.
 Therefore we will defer to prior art to ensure robustness and correctness and to drastically reduce the surface area for timezone bugs.
 
