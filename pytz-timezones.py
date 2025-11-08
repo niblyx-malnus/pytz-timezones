@@ -36,17 +36,26 @@ def get_all_dst_transitions(zone_name):
         return transitions
 
 def write_transitions_to_csv(directory_name, zone_name, transitions):
-    # Create CSV file for the timezone
-    filename = f'{directory_name}/{zone_name.replace("/", "-").replace("_", "-").replace("+", "--").lower()}.txt'
-    with open(filename, mode='w', newline='') as file:
-        writer = csv.writer(file, lineterminator='\n')
-        writer.writerow(['Time', 'Offset', 'Name'])
-        
-        for transition in transitions:
-            utc_time, offset, rule_name = transition
-            offset_str = format_offset(offset)
-            writer.writerow([utc_time.strftime('%Y-%m-%dT%H:%M:%S'), offset_str, rule_name])
-    
+    # Create Hoon file for the timezone
+    filename = f'{directory_name}/{zone_name.replace("/", "-").replace("_", "-").replace("+", "--").lower()}.hoon'
+
+    # Build CSV content as a string
+    csv_lines = ['Time,Offset,Name']
+    for transition in transitions:
+        utc_time, offset, rule_name = transition
+        offset_str = format_offset(offset)
+        # Zero-pad year to 4 digits (strftime %Y doesn't pad years < 1000)
+        time_str = f'{utc_time.year:04d}-{utc_time.month:02d}-{utc_time.day:02d}T{utc_time.hour:02d}:{utc_time.minute:02d}:{utc_time.second:02d}'
+        csv_lines.append(f'{time_str},{offset_str},{rule_name}')
+
+    csv_content = '\n'.join(csv_lines)
+
+    # Wrap in Hoon format with to-wain:format
+    hoon_content = f"%-  to-wain:format\n'''\n{csv_content}\n'''\n"
+
+    with open(filename, mode='w') as file:
+        file.write(hoon_content)
+
     return filename
 
 def main():
@@ -56,21 +65,27 @@ def main():
         os.makedirs(directory_name)
     
     # Write the pytz version to version.hoon
-    version_filename = f'{directory_name}/version.txt'
-    with open(version_filename, mode='w', newline='') as version_file:
-        version_file.write(pytz.__version__)
-    
+    version_filename = f'{directory_name}/version.hoon'
+    with open(version_filename, mode='w') as version_file:
+        version_file.write(f"%-  to-wain:format\n'''\n{pytz.__version__}\n'''\n")
+
     # Prepare names file
-    names_filename = f'{directory_name}/names.txt'
-    with open(names_filename, mode='w', newline='') as names_file:
-        # Get all timezones
-        timezones = pytz.all_timezones
-        
-        for zone_name in timezones:
-            transitions = get_all_dst_transitions(zone_name)
-            write_transitions_to_csv(directory_name, zone_name, transitions)
-            print(zone_name)
-            names_file.write(f"{zone_name}\n")
+    names_filename = f'{directory_name}/names.hoon'
+
+    # Get all timezones
+    timezones = pytz.all_timezones
+    timezone_names = []
+
+    for zone_name in timezones:
+        transitions = get_all_dst_transitions(zone_name)
+        write_transitions_to_csv(directory_name, zone_name, transitions)
+        print(zone_name)
+        timezone_names.append(zone_name)
+
+    # Write names file with Hoon wrapper
+    names_content = '\n'.join(timezone_names)
+    with open(names_filename, mode='w') as names_file:
+        names_file.write(f"%-  to-wain:format\n'''\n{names_content}\n'''\n")
 
 if __name__ == "__main__":
     main()
